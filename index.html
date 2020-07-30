@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba con Fetch</title>
+    <link href="estilo.css" rel="stylesheet"> <!-- Pequeña hoja de estilos para dar formato-->
+    <script>
+        const url="http://api.openweathermap.org/data/2.5/weather?q=Montevideo,uy&APPID=50ed0a46431ae05b6dbb0c472ac332f6"; 
+        //dirección de la API. Puede ser la ruta a un archivo json. CREA LA TUYA.
+
+        var fechas=Date()
+        var diaActual= fechas.substring(16,21) + ', ' + fechas.substring(0,3) + ', ' + fechas.substring(4,10) + ', ' + fechas.substring(11,15);
+
+        function direcViento(grados){
+
+            if (grados<22.5 || grados>337.5){
+                return 'N';
+            }else if (grados>=22.5 && grados<67.5){
+                return 'NE';
+            }else if (grados>=67.5 && grados<112.5){
+                return 'E';
+            }else if (grados>=112.5 && grados<157.5){
+                return 'SE';
+            }else if (grados>=157.5 && grados<202.5){
+                return 'S';
+            }else if (grados>=202.5 && grados<247.5){
+                return 'SW';
+            }else if (grados>=247.5 && grados<292.5){
+                return 'W';
+            }else{
+                return 'NW';
+            }
+        }
+        function flechaViento(grados){
+
+            if (grados<22.5 || grados>337.5){
+                return 'imagenes/flechaN.jpg';
+            }else if (grados>=22.5 && grados<67.5){
+                return 'imagenes/flechaNE.jpg';
+            }else if (grados>=67.5 && grados<112.5){
+                return 'imagenes/flechaE.jpg';
+            }else if (grados>=112.5 && grados<157.5){
+                return 'imagenes/flechaSE.jpg';
+            }else if (grados>=157.5 && grados<202.5){
+                return 'imagenes/flechaS.jpg';
+            }else if (grados>=202.5 && grados<247.5){
+                return 'imagenes/flechaSW.jpg';
+            }else if (grados>=247.5 && grados<292.5){
+                return 'imagenes/flechaW.jpg';
+            }else{
+                return 'imagenes/flechaNW.jpg';
+            }
+            }
+
+        fetch(url) //Realizamos el fetch que devolverá una promesa
+            .then( respuesta=>respuesta.json()) //Obtenemos una promesa que trataremos como json
+            .then(datos=> { //obtenemos una nueva promesa, pero los datos ya están como json.
+                document.getElementById('ciudad').innerHTML= datos.name + ", " + datos.sys.country; //escribo los datos del país
+                document.getElementById('temp').innerHTML=(datos.main.temp -273.15).toFixed(1) + "ºC";//escribo la temperatura. la convierto de kelvin a celsius
+                document.getElementById('imagen').src="http://openweathermap.org/img/wn/"+ datos.weather[0].icon +".png" //imagen
+                document.getElementById('sensacionTerm').innerHTML= 'Feels like ' + (datos.main.feels_like -273.15).toFixed(1) + "ºC.";
+                document.getElementById('descripcion').innerHTML= datos.weather[0].main + '. ' + datos.weather[0].description;
+                document.getElementById('humedad').innerHTML= 'Humidity: ' + datos.main.humidity + '%';
+                document.getElementById('presion').innerHTML= datos.main.pressure + 'hPa &nbsp';
+                document.getElementById('viento').innerHTML= datos.wind.speed + 'm/s ' + direcViento(datos.wind.deg) + '&nbsp';
+                document.getElementById("fecha").innerHTML= diaActual;
+                document.getElementById('flecha').src= flechaViento(datos.wind.deg);
+            })
+            .catch( error => alert("Hubo un error: " + error));
+            
+            
+    
+    </script>
+</head>
+<body>
+    
+    <div id="principal">
+        <span id='titulo'>Clima en Montevideo</span><br><br><br><br><br>
+        <img id='placeholder' src='imagenes/placeholder.jpg' alt="">
+        <span id="ciudad"></span><br>
+        <span id="fecha"></span><br><br>
+        <img id='imagen' src="">
+        <span id="temp"></span><br><br>
+        <div>
+            <span id='sensacionTerm'></span>
+            <span id='descripcion'></span>
+        </div>
+        <div id="datos">
+        <img id='flecha' src='' alt="">
+        <span id='viento'></span>
+        <img id='barometro' src='imagenes/barometro.jpg' alt="">
+        <span id="presion"></span>
+        <span id='humedad'></span><br>
+        </div>
+        
+    </div>
+    <div id="descCiudad">
+        Montevideo es la capital y ciudad más poblada de la República Oriental del Uruguay. Asimismo, es sede del Mercosur y de la ALADI. El censo de 2011 registró 1 319 108 habitantes en el departamento y 1 947 604 en el área metropolitana.5​ Se ubica en la zona meridional del país6​ y es la capital más austral de América. Limita al oeste con el departamento de San José, y al norte y este con el de Canelones. Al sur tiene costas sobre el Río de la Plata, donde se ubican la bahía de Montevideo y el principal puerto de la región. 
+    </div>
+</body>
+</html>
